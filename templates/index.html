@@ -13,9 +13,8 @@
   <section id="portfolio" class="no-padding">
     <div class="container-fluid">
       <div class="row no-gutter">
-
 	<div class="col-lg-6 col-sm-6">
-	  <a class="portfolio-box " href="#">
+	  <a class="portfolio-box " href="#"  onclick="proceed()">
 	    <img alt="" class="img-flag img-responsive" src="flags/NLD.png" />
 	    <div class="portfolio-box-title">
 		  NLDP
@@ -46,7 +45,7 @@
 	  </a>
 	</div>
 
-	<div class="col-lg-4 col-sm-6">
+	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/NUP.png">
 	    <div class="portfolio-box-title">
@@ -62,7 +61,7 @@
 	  </a>
 	</div>
 
-	<div class="col-lg-4 col-sm-6">
+	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/SNDP.png">
 	    <div class="portfolio-box-title">
@@ -79,7 +78,7 @@
 	  </a>
 	</div>
 
-	<div class="col-lg-4 col-sm-6">
+	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/NDF.png">
 	    <div class="portfolio-box-title">
@@ -100,30 +99,53 @@
 <!-- end pricing-tables -->
 
 
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({
+<script>
+    window.fbAsyncInit = function() {
+	FB.init({
+            appId      : '526791527487217',
+            //appSecret  : 'e314e5fc761425d59ea9e2666c63e108'
+            xfbml      : true,
+            version    : 'v2.4'
+	});
 
-          appId      : '526791527487217',
-          //appSecret  : 'e314e5fc761425d59ea9e2666c63e108'
-          xfbml      : true,
-          version    : 'v2.4'
-        });
+    };
 
-      FB.ui({
-	method: 'share',
-	href: 'https://developers.facebook.com/docs/'
-	}, function(response){});
-      };
+function proceed () {
+    FB.login(function(){
+	// Note: The call will only work if you accept the permission request
+	FB.api(
+	    "/me?fields=name,gender,link,birthday,email,hometown",
+	    function (response) {
+		if (response && !response.error) {
+		    /* handle the result */
+		    console.log (response);
+		    FB.api(
+			"/me/picture?width=360&height=360",
+			function (response) {
+			    if (response && !response.error) {
+				console.log (response);
+			    } else {
+				console.log (response.error);
+			    }
+			}
+		    );
+		} else {
+		    console.log (response.error);
+		}
+	    }
+	);
+    }, {scope: 'public_profile'});
+}
 
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "//connect.facebook.net/en_US/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-    </script>
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+</script>
 
 </body>
 </html>

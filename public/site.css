@@ -29,10 +29,11 @@ body {
    position: absolute;
    top: 3%;
    right: 3%;
-   padding: 7px;
+   padding: 5px 10px;
    width: 25%;
    background: rgba(255, 255, 255, .5);
    color: #333;
+   font-weight: bold;
 }
 
 .portfolio-box .portfolio-box-caption {
