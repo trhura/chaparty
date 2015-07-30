@@ -1,15 +1,28 @@
-package main
+package app
 
 import (
 	"bufio"
 	"fmt"
 	"image"
 	"image/draw"
-	"image/jpeg"
 	"image/png"
 	"os"
 	"path/filepath"
 )
+
+var flagImages = loadFlags("./flags/*")
+
+// func main() {
+// 	proFile, err := os.Open("./p.jpg")
+// 	check(err)
+
+// 	reader := bufio.NewReader(proFile)
+// 	profileImage, err := jpeg.Decode(reader)
+// 	check(err)
+
+// 	OverLayFlag(profileImage, "NLD")
+
+// }
 
 func check(e error) {
 	if e != nil {
@@ -17,22 +30,8 @@ func check(e error) {
 	}
 }
 
-var FlagImages = loadFlags("./flags/*")
-
-func main() {
-	proFile, err := os.Open("./p.jpg")
-	check(err)
-
-	reader := bufio.NewReader(proFile)
-	profileImage, err := jpeg.Decode(reader)
-	check(err)
-
-	addFlag(profileImage, "NLD")
-
-}
-
-func addFlag(profile image.Image, flag string) {
-	if flagImage, ok := FlagImages[flag]; ok {
+func OverLayFlag(profile image.Image, flag string) {
+	if flagImage, ok := flagImages[flag]; ok {
 		fmt.Println("yes")
 
 		destImage := image.NewRGBA(profile.Bounds())

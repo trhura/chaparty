@@ -1,10 +1,11 @@
 package app
 
 import (
-  "net/http"
-  "github.com/go-martini/martini"
-  "github.com/martini-contrib/render"
-// fb "github.com/huandu/facebook"
+	"net/http"
+
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
+	// fb "github.com/huandu/facebook"
 )
 
 func init() {
@@ -15,7 +16,7 @@ func init() {
 	}))
 
 	m.Get("/", func(r render.Render) {
-		r.HTML(200, "hello", "jeremy")
+		r.HTML(200, "index", nil)
 	})
 
 	http.Handle("/", m)
