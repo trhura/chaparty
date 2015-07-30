@@ -16,12 +16,12 @@
 
 	<div class="col-lg-6 col-sm-6">
 	  <a class="portfolio-box " href="#">
-	    <img alt="" class="img-flag img-responsive" src="flags/NLD.png">
+	    <img alt="" class="img-flag img-responsive" src="flags/NLD.png" />
+	    <div class="portfolio-box-title">
+		  NLDP
+	    </div>
 	    <div class="portfolio-box-caption">
 	      <div class="portfolio-box-caption-content">
-		<div class="project-category text-faded">
-		  NLDP
-		</div>
 		<div class="project-name">
 		  National League for Democracy
 		</div>
@@ -33,11 +33,11 @@
 	<div class="col-lg-6 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-flag img-responsive" src="flags/USDP.png">
+	    <div class="portfolio-box-title">
+	      USDP
+	    </div>
 	    <div class="portfolio-box-caption">
 	      <div class="portfolio-box-caption-content">
-		<div class="project-category text-faded">
-		  USDP
-		</div>
 		<div class="project-name">
 		  Union Solidarity and Development Party
 		</div>
@@ -49,11 +49,11 @@
 	<div class="col-lg-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/NUP.png">
+	    <div class="portfolio-box-title">
+	      NUP
+	    </div>
 	    <div class="portfolio-box-caption">
 	      <div class="portfolio-box-caption-content">
-		<div class="project-category text-faded">
-		  NUP
-		</div>
 		<div class="project-name">
 		  National Unity Party
 		</div>
@@ -65,11 +65,12 @@
 	<div class="col-lg-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/SNDP.png">
+	    <div class="portfolio-box-title">
+	      SNDP
+	    </div>
 	    <div class="portfolio-box-caption">
 	      <div class="portfolio-box-caption-content">
-		<div class="project-category text-faded">
-		  SNDP
-		</div>
+
 		<div class="project-name">
 		  Shan Nationalities Democratic Party
 		</div>
@@ -81,11 +82,11 @@
 	<div class="col-lg-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
 	    <img alt="" class="img-responsive" src="flags/NDF.png">
+	    <div class="portfolio-box-title">
+	      NDF
+	    </div>
 	    <div class="portfolio-box-caption">
 	      <div class="portfolio-box-caption-content">
-		<div class="project-category text-faded">
-		  NDF
-		</div>
 		<div class="project-name">
 		  National Democratic Force
 		</div>
@@ -93,14 +94,36 @@
 	    </div>
 	  </a>
 	</div>
-
-
-
-
       </div>
     </div>
   </section>
 <!-- end pricing-tables -->
+
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+
+          appId      : '526791527487217',
+          //appSecret  : 'e314e5fc761425d59ea9e2666c63e108'
+          xfbml      : true,
+          version    : 'v2.4'
+        });
+
+      FB.ui({
+	method: 'share',
+	href: 'https://developers.facebook.com/docs/'
+	}, function(response){});
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
 
 </body>
 </html>

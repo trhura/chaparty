@@ -25,8 +25,18 @@ body {
     position: relative;
 }
 
+.portfolio-box .portfolio-box-title {
+   position: absolute;
+   top: 3%;
+   right: 3%;
+   padding: 7px;
+   width: 25%;
+   background: rgba(255, 255, 255, .5);
+   color: #333;
+}
+
 .portfolio-box .portfolio-box-caption {
-    background: rgba(240, 95, 64, 0.9) none repeat scroll 0 0;
+    background: rgba(3, 169, 244, 0.9) none repeat scroll 0 0;
     bottom: 0;
     color: #fff;
     display: block;
