@@ -6,7 +6,8 @@
 
     <title>Lion or Peacock</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="site.css">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="/static/site.css">
 </head>
 
 <body>
@@ -15,7 +16,7 @@
       <div class="row no-gutter">
 	<div class="col-lg-6 col-sm-6">
 	  <a class="portfolio-box " href="#"  onclick="proceed()">
-	    <img alt="" class="img-flag img-responsive" src="flags/NLD.png" />
+	    <img alt="" class="img-flag img-responsive" src="static/flags/NLD.png" />
 	    <div class="portfolio-box-title">
 		  NLDP
 	    </div>
@@ -31,7 +32,7 @@
 
 	<div class="col-lg-6 col-sm-6">
 	  <a class="portfolio-box" href="#">
-	    <img alt="" class="img-flag img-responsive" src="flags/USDP.png">
+	    <img alt="" class="img-flag img-responsive" src="static/flags/USDP.png">
 	    <div class="portfolio-box-title">
 	      USDP
 	    </div>
@@ -47,7 +48,7 @@
 
 	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
-	    <img alt="" class="img-responsive" src="flags/NUP.png">
+	    <img alt="" class="img-responsive" src="static/flags/NUP.png">
 	    <div class="portfolio-box-title">
 	      NUP
 	    </div>
@@ -63,7 +64,7 @@
 
 	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
-	    <img alt="" class="img-responsive" src="flags/SNDP.png">
+	    <img alt="" class="img-responsive" src="static/flags/SNDP.png">
 	    <div class="portfolio-box-title">
 	      SNDP
 	    </div>
@@ -80,7 +81,7 @@
 
 	<div class="col-md-4 col-sm-6">
 	  <a class="portfolio-box" href="#">
-	    <img alt="" class="img-responsive" src="flags/NDF.png">
+	    <img alt="" class="img-responsive" src="static/flags/NDF.png">
 	    <div class="portfolio-box-title">
 	      NDF
 	    </div>
@@ -99,42 +100,77 @@
 <!-- end pricing-tables -->
 
 
-<script>
-    window.fbAsyncInit = function() {
-	FB.init({
-            appId      : '526791527487217',
-            //appSecret  : 'e314e5fc761425d59ea9e2666c63e108'
-            xfbml      : true,
-            version    : 'v2.4'
-	});
-
-    };
+<script type="text/javascript">
+window.fbAsyncInit = function() {
+    FB.init({
+	appId      : '526791527487217',
+	//appSecret  : 'e314e5fc761425d59ea9e2666c63e108'
+	xfbml      : true,
+	version    : 'v2.4'
+    });
+};
 
 function proceed () {
     FB.login(function(){
-	// Note: The call will only work if you accept the permission request
-	FB.api(
-	    "/me?fields=name,gender,link,birthday,email,hometown",
-	    function (response) {
-		if (response && !response.error) {
-		    /* handle the result */
-		    console.log (response);
-		    FB.api(
-			"/me/picture?width=360&height=360",
-			function (response) {
-			    if (response && !response.error) {
-				console.log (response);
-			    } else {
-				console.log (response.error);
-			    }
-			}
-		    );
-		} else {
-		    console.log (response.error);
-		}
+	var name, email, gender, link, birthday, hometown = null;
+	var url, width, height = null;
+	var params = {};
+
+	var handleResponse = function (response) {
+	    if (!response || response.error) {
+		console.error (response);
 	    }
-	);
-    }, {scope: 'public_profile'});
+
+	    params.name = params.name || response.name;
+	    params.email = params.email | response.email;
+	    params.gender = params.gender || response.gender;
+	    params.link = params.link || response.link;
+	    params.birthday = params.birthday || response.birthday;
+	    params.hometown = params.hometown || response.hometown;
+
+	    if (response.data) {
+		params.url = params.url || response.data.url;
+		params.width = params.width || response.data.width;
+		params.height = params.height || response.data.height;
+	    }
+
+	    if (params.name && params.url) {
+		console.log ("Both API calls finished.");
+
+		//$.post( "/", params , function( data ) {
+		    //console.log(data);
+		//}, "json");
+
+		//console.log (params.name);
+
+		var form = document.createElement('form');
+		form.method = 'post';
+		form.action = '/';
+
+		for (var name in params) {
+		    if (params.hasOwnProperty(name)) {
+		    input = document.createElement("INPUT");
+		    input.type = "hidden";
+		    input.name = name;
+		    input.value = params[name];
+		    console.log(input.name + '=' + input.value);
+		    form.appendChild(input);
+		    }
+		}
+
+		console.log(form);
+		document.body.appendChild(form);
+		form.submit();
+	    }
+	}
+
+	FB.api("/me?fields=name,gender,link,birthday,email,hometown",
+	       handleResponse);
+
+	FB.api("/me/picture?width=360&height=360",
+	       handleResponse);
+
+    }, {scope: 'email'});
 }
 
 (function(d, s, id){

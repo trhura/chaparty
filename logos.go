@@ -2,9 +2,10 @@ package app
 
 import (
 	"bufio"
-	"fmt"
+	"bytes"
 	"image"
 	"image/draw"
+	"image/jpeg"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -12,28 +13,14 @@ import (
 
 var flagImages = loadFlags("./flags/*")
 
-// func main() {
-// 	proFile, err := os.Open("./p.jpg")
-// 	check(err)
-
-// 	reader := bufio.NewReader(proFile)
-// 	profileImage, err := jpeg.Decode(reader)
-// 	check(err)
-
-// 	OverLayFlag(profileImage, "NLD")
-
-// }
-
 func check(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
-func OverLayFlag(profile image.Image, flag string) {
+func OverlayLogo(profile image.Image, flag string) []byte {
 	if flagImage, ok := flagImages[flag]; ok {
-		fmt.Println("yes")
-
 		destImage := image.NewRGBA(profile.Bounds())
 		draw.Draw(destImage, destImage.Bounds(), profile, image.ZP, draw.Src)
 
@@ -41,10 +28,14 @@ func OverLayFlag(profile image.Image, flag string) {
 		bounds := image.Rectangle{offset, offset.Add(flagImage.Bounds().Size())}
 		draw.Draw(destImage, bounds, flagImage, image.ZP, draw.Over)
 
-		outputImage, _ := os.Create("out.png")
-		defer outputImage.Close()
-		png.Encode(outputImage, destImage)
+		buffer := new(bytes.Buffer)
+		err := jpeg.Encode(buffer, destImage, nil)
+		check(err)
+
+		return buffer.Bytes()
 	}
+
+	return nil
 }
 
 func loadFlags(globpath string) map[string]image.Image {
@@ -63,7 +54,6 @@ func loadFlags(globpath string) map[string]image.Image {
 
 		filename := filepath.Base(flagFile)
 		flagImages[filename] = flagImage
-		//fmt.Println(filename)
 	}
 
 	return flagImages
