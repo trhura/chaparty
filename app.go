@@ -7,13 +7,12 @@ import (
 	"os"
 	"strconv"
 
-	"appengine"
-	"appengine/urlfetch"
-
 	"image"
-
 	_ "image/jpeg"
 	_ "image/png"
+
+	"appengine"
+	"appengine/urlfetch"
 )
 
 func init() {

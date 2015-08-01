@@ -24,8 +24,11 @@ func OverlayLogo(profile image.Image, flag string) []byte {
 		destImage := image.NewRGBA(profile.Bounds())
 		draw.Draw(destImage, destImage.Bounds(), profile, image.ZP, draw.Src)
 
-		offset := image.Pt(300, 300)
-		bounds := image.Rectangle{offset, offset.Add(flagImage.Bounds().Size())}
+		start := profile.Bounds().Size()
+		start = start.Sub(image.Pt(5, 7))
+		start = start.Sub(flagImage.Bounds().Size())
+
+		bounds := image.Rectangle{start, start.Add(flagImage.Bounds().Size())}
 		draw.Draw(destImage, bounds, flagImage, image.ZP, draw.Over)
 
 		buffer := new(bytes.Buffer)
