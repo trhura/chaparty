@@ -48,13 +48,13 @@ func handleGet(w http.ResponseWriter, r *http.Request) {
 	context := appengine.NewContext(r)
 	data, err := ioutil.ReadFile("index.html")
 	check(err, context)
-
 	w.Write(data)
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	url := r.FormValue("url")
+	party := r.FormValue("party")
 
 	context := appengine.NewContext(r)
 	client := urlfetch.Client(context)
@@ -68,7 +68,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	profilePicture, _, err := image.Decode(reader)
 	check(err, context)
 
-	imagebytes := addLogo(&profilePicture, "NLD", context)
+	imagebytes := addLogo(&profilePicture, party, context)
 	w.Header().Set("Content-Type", "image/jpeg")
 	w.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
 	_, err = w.Write(imagebytes)

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"image"
 	"image/draw"
-	"image/jpeg"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -28,12 +27,11 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 
 	if logoImages == nil {
 		logoImages = loadLogos("./logos/*", context)
-		context.Infof("%s", logoImages)
 	}
 
 	if logoImage, ok := logoImages[logo]; ok {
 		start := profileImage.Bounds().Size()
-		start = start.Sub(image.Pt(5, 7))
+		start = start.Sub(image.Pt(5, 5))
 		start = start.Sub(logoImage.Bounds().Size())
 
 		bounds := image.Rectangle{start, start.Add(logoImage.Bounds().Size())}
@@ -44,7 +42,7 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 	}
 
 	buffer := new(bytes.Buffer)
-	err := jpeg.Encode(buffer, destImage, nil)
+	err := png.Encode(buffer, destImage)
 	check(err, context)
 
 	return buffer.Bytes()
