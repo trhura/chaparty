@@ -1,11 +1,13 @@
 import base64, glob
 import os.path
 import subprocess
+import random
 
 from xml.dom import minidom
 from PIL import Image
 
 root_path = os.path.dirname(__file__)
+
 
 def generate_svg(imagepath):
     img = Image.open(imagepath)
