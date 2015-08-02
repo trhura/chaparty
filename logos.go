@@ -9,55 +9,64 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+
+	"appengine"
 )
 
-var flagImages = loadFlags("./flags/*")
+var logoImages map[string]image.Image = nil // = loadLogos()
 
-func check(e error) {
+func check(e error, context appengine.Context) {
 	if e != nil {
-		panic(e)
+		context.Errorf("Error: %s", e)
 	}
 }
 
-func OverlayLogo(profile image.Image, flag string) []byte {
-	if flagImage, ok := flagImages[flag]; ok {
-		destImage := image.NewRGBA(profile.Bounds())
-		draw.Draw(destImage, destImage.Bounds(), profile, image.ZP, draw.Src)
+func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []byte {
+	profileImage := *profilePtr
+	destImage := image.NewRGBA(profileImage.Bounds())
+	draw.Draw(destImage, destImage.Bounds(), profileImage, image.ZP, draw.Src)
 
-		start := profile.Bounds().Size()
+	if logoImages == nil {
+		logoImages = loadLogos("./logos/*", context)
+		context.Infof("%s", logoImages)
+	}
+
+	if logoImage, ok := logoImages[logo]; ok {
+		start := profileImage.Bounds().Size()
 		start = start.Sub(image.Pt(5, 7))
-		start = start.Sub(flagImage.Bounds().Size())
+		start = start.Sub(logoImage.Bounds().Size())
 
-		bounds := image.Rectangle{start, start.Add(flagImage.Bounds().Size())}
-		draw.Draw(destImage, bounds, flagImage, image.ZP, draw.Over)
+		bounds := image.Rectangle{start, start.Add(logoImage.Bounds().Size())}
+		draw.Draw(destImage, bounds, logoImage, image.ZP, draw.Over)
 
-		buffer := new(bytes.Buffer)
-		err := jpeg.Encode(buffer, destImage, nil)
-		check(err)
-
-		return buffer.Bytes()
+	} else {
+		context.Errorf("Cannot load logoimage for %s", logo)
 	}
 
-	return nil
+	buffer := new(bytes.Buffer)
+	err := jpeg.Encode(buffer, destImage, nil)
+	check(err, context)
+
+	return buffer.Bytes()
 }
 
-func loadFlags(globpath string) map[string]image.Image {
-	flagFiles, err := filepath.Glob(globpath)
-	check(err)
+func loadLogos(globpath string, context appengine.Context) map[string]image.Image {
+	logoFiles, err := filepath.Glob(globpath)
+	check(err, context)
 
-	flagImages := make(map[string]image.Image)
-	for _, flagFile := range flagFiles {
-		flagData, err := os.Open(flagFile)
-		defer flagData.Close()
-		check(err)
+	logoImages := make(map[string]image.Image)
+	for _, logoFile := range logoFiles {
+		logoData, err := os.Open(logoFile)
+		defer logoData.Close()
+		check(err, context)
 
-		reader := bufio.NewReader(flagData)
-		flagImage, err := png.Decode(reader)
-		check(err)
+		reader := bufio.NewReader(logoData)
+		logoImage, err := png.Decode(reader)
+		check(err, context)
 
-		filename := filepath.Base(flagFile)
-		flagImages[filename] = flagImage
+		filename := filepath.Base(logoFile)
+		logoImages[filename] = logoImage
 	}
 
-	return flagImages
+	return logoImages
 }

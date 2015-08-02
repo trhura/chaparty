@@ -45,8 +45,9 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGet(w http.ResponseWriter, r *http.Request) {
+	context := appengine.NewContext(r)
 	data, err := ioutil.ReadFile("index.html")
-	check(err)
+	check(err, context)
 
 	w.Write(data)
 }
@@ -61,16 +62,15 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	resp, err := client.Get(url)
 	data, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	check(err)
+	check(err, context)
 
 	reader := bytes.NewReader(data)
 	profilePicture, _, err := image.Decode(reader)
-	check(err)
+	check(err, context)
 
-	imagebytes := OverlayLogo(profilePicture, "NLD")
-
+	imagebytes := addLogo(&profilePicture, "NLD", context)
 	w.Header().Set("Content-Type", "image/jpeg")
 	w.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
 	_, err = w.Write(imagebytes)
-	check(err)
+	check(err, context)
 }

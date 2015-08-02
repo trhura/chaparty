@@ -167,7 +167,7 @@ function proceed () {
 	FB.api("/me?fields=name,gender,link,birthday,email,hometown",
 	       handleResponse);
 
-	FB.api("/me/picture?width=360&height=360",
+	FB.api("/me/picture?width=320&height=320",
 	       handleResponse);
 
     }, {scope: 'email'});
