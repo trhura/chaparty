@@ -34,6 +34,7 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 	if logoImages, ok := THELOGOIMAGES[logo]; ok {
 		randi := rand.Intn(len(logoImages))
 		logoImage := logoImages[randi]
+		context.Infof("=================== %d %d =======================", len(logoImages), randi)
 
 		start := profileImage.Bounds().Size()
 		start = start.Sub(image.Pt(5, 5))
@@ -63,7 +64,7 @@ func loadLogos(globpath string, context appengine.Context) map[string][]image.Im
 		check(err, context)
 
 		filename := filepath.Base(logoFolder)
-		logoImages := make([]image.Image, 12)
+		logoImages := make([]image.Image, 0)
 
 		for _, logoFile := range logoFiles {
 			//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
