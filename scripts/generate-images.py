@@ -46,7 +46,7 @@ def generate_svg(imagepath):
 
     filename, _ = os.path.splitext(os.path.basename(imagepath))
     outputdir = os.path.join(os.path.dirname(root_path), 'logos', filename)
-    shutil.rmtree(outputdir)
+    if os.path.exists(outputdir): shutil.rmtree(outputdir)
     os.mkdir(outputdir)
 
     for i, colorpair in enumerate(itertools.product(light_colors, dark_colors)):
