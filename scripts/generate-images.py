@@ -21,9 +21,7 @@ light_colors = [
 ]
 
 dark_colors = [
-    "#d50000",
-    "#0091ea",
-    "#ff5722",
+    "#111111",
 ]
 
 def generate_svg(imagepath):

@@ -1,11 +1,32 @@
+/*
+ * Tharlon (Myanmar) http://www.google.com/fonts/earlyaccess
+ */
+@font-face {
+    font-family: 'Tharlon';
+    font-style: normal;
+    font-weight: 400;
+    src: url(//fonts.gstatic.com/ea/tharlon/v3/Tharlon-Regular.eot);
+    src: url(//fonts.gstatic.com/ea/tharlon/v3/Tharlon-Regular.eot?#iefix) format('embedded-opentype'),
+    url(//fonts.gstatic.com/ea/tharlon/v3/Tharlon-Regular.woff2) format('woff2'),
+    url(//fonts.gstatic.com/ea/tharlon/v3/Tharlon-Regular.woff) format('woff'),
+    url(//fonts.gstatic.com/ea/tharlon/v3/Tharlon-Regular.ttf) format('truetype');
+}
 
 body {
-    background-color: #f0f0f0;
+    background-color: #333333;
+    font-family: 'Tharlon', Myanmar3, Pyidaungsu, Yunghkio, Padauak;
 }
 
 .no-gutter > [class*="col-"] {
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.heading {
+    background-color: #C5cae9;
+    color: #EF6C00;
+    border: 1px solid #999;
+    text-shadow: 1px 1px #333333;
 }
 
 .img-flag {
@@ -18,7 +39,7 @@ body {
 }
 
 .portfolio-box {
-    border: 1px solid #323232;
+    border: 1px solid #333333;
     display: block;
     margin: 0 auto;
     max-width: 650px;
@@ -37,9 +58,10 @@ body {
 }
 
 .portfolio-box .portfolio-box-caption {
-    background: rgba(3, 169, 244, 0.9) none repeat scroll 0 0;
+    background: rgba(192, 203, 233, 0.8) none repeat scroll 0 0;
     bottom: 0;
-    color: #fff;
+    color: #000000;
+    text-shadow: 1px 1px #333333;
     display: block;
     height: 100%;
     opacity: 0;
