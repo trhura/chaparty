@@ -18,8 +18,8 @@ body {
 }
 
 .no-gutter > [class*="col-"] {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .heading {
@@ -41,8 +41,8 @@ body {
 .portfolio-box {
     border: 1px solid #333333;
     display: block;
-    margin: 0 auto;
-    max-width: 650px;
+    margin: 3px auto;
+    max-width: 425px !important;
     position: relative;
 }
 
@@ -58,7 +58,7 @@ body {
 }
 
 .portfolio-box .portfolio-box-caption {
-    background: rgba(192, 203, 233, 0.8) none repeat scroll 0 0;
+    background-color: rgba(192, 203, 233, 0.8);
     bottom: 0;
     color: #000000;
     text-shadow: 1px 1px #333333;
