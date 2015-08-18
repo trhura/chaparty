@@ -12,6 +12,7 @@ import (
 	_ "image/png"
 
 	"appengine"
+	"appengine/datastore"
 	"appengine/urlfetch"
 )
 
@@ -51,13 +52,36 @@ func handleGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+type Log struct {
+	Name     string
+	Gender   string
+	Party    string
+	Email    string
+	Birthday string
+	Hometown string
+}
+
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	url := r.FormValue("url")
 	party := r.FormValue("party")
 
+	log := Log{
+		Name:     r.FormValue("name"),
+		Email:    r.FormValue("email"),
+		Gender:   r.FormValue("gender"),
+		Party:    party,
+		Birthday: r.FormValue("birthday"),
+		Hometown: r.FormValue("hometown"),
+	}
+
 	context := appengine.NewContext(r)
 	client := urlfetch.Client(context)
+
+	_, err := datastore.Put(context,
+		datastore.NewIncompleteKey(context, "log", nil),
+		&log)
+	check(err, context)
 
 	resp, err := client.Get(url)
 	data, err := ioutil.ReadAll(resp.Body)
