@@ -13,7 +13,7 @@
 }
 
 body {
-    background-color: #333333;
+    background-color: #FDF6E3;
     font-family: 'Tharlon', Myanmar3, Pyidaungsu, Yunghkio, Padauak;
 }
 
@@ -23,8 +23,8 @@ body {
 }
 
 .heading {
-    background-color: #C5cae9;
-    color: #EF6C00;
+    background-color: #5C6BC0;
+    color: #f3f3f3;
     border: 1px solid #999;
     text-shadow: 1px 1px #333333;
 }
@@ -53,23 +53,24 @@ body {
    padding: 5px 10px;
    width: 25%;
    background: rgba(0, 0, 0, .5);
-   color: #efefef;
+   color: #f3f3f3;
    font-weight: bold;
 }
 
 .portfolio-box .portfolio-box-caption {
-    background-color: rgba(192, 203, 233, 0.8);
-    bottom: 0;
-    color: #000000;
+    background-color: rgba(229, 57, 53, 0.8);
     text-shadow: 1px 1px #333333;
-    display: block;
-    height: 100%;
-    opacity: 0;
+    transition: all 0.35s ease 0s;
     position: absolute;
     text-align: center;
-    transition: all 0.35s ease 0s;
+    color: #f3f3f3;
+    display: block;
+    height: 100%;
     width: 100%;
+    opacity: 0;
+    bottom: 0;
 }
+
 .portfolio-box .portfolio-box-caption .portfolio-box-caption-content {
     position: absolute;
     text-align: center;
@@ -104,4 +105,4 @@ body {
     .portfolio-box .portfolio-box-caption .portfolio-box-caption-content .project-name {
 	font-size: 22px;
     }
-}
+}{}
