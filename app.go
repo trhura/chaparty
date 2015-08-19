@@ -57,7 +57,7 @@ type Log struct {
 	Gender   string
 	Party    string
 	Email    string
-	Birthday string
+	AgeRange string
 	Hometown string
 }
 
@@ -70,9 +70,9 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		Name:     r.FormValue("name"),
 		Email:    r.FormValue("email"),
 		Gender:   r.FormValue("gender"),
-		Party:    party,
-		Birthday: r.FormValue("birthday"),
 		Hometown: r.FormValue("hometown"),
+		AgeRange: r.FormValue("age_range"),
+		Party:    party,
 	}
 
 	context := appengine.NewContext(r)

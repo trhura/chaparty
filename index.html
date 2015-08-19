@@ -157,15 +157,16 @@
 window.fbAsyncInit = function() {
     FB.init({
 	appId      : '526791527487217',
-	appSecret  : 'e314e5fc761425d59ea9e2666c63e108',
-	xfbml      : true,
-	version    : 'v2.4'
-    });
+//	appSecret  : 'e314e5fc761425d59ea9e2666c63e108',
+	xfbml      : false,
+	version    : 'v2.4',
+	status: true,
+	cookie: true
+    })
 };
 
 function proceed (party) {
     FB.login(function(){
-	var name, email, gender, link, birthday, hometown = null;
 	var url, width, height = null;
 	var params = {};
 
@@ -177,8 +178,8 @@ function proceed (party) {
 	    params.name = params.name || response.name;
 	    params.email = params.email || response.email;
 	    params.gender = params.gender || response.gender;
-	    params.birthday = params.birthday || response.birthday;
-	    params.hometown = params.hometown || response.hometown.name;
+	    params.agerange = params.agerange || response.age_range && response.age_range.min;
+	    params.hometown = params.hometown || response.hometown && response.hometown.name;
 	    params.party = party;
 
 	    if (response.data) {
@@ -190,6 +191,7 @@ function proceed (party) {
 	    if (params.name && params.url) {
 		console.log ("Both API calls finished.");
 		console.log (params);
+		console.log (response);
 
 		var form = document.createElement('form');
 		form.method = 'post';
@@ -207,17 +209,17 @@ function proceed (party) {
 
 		console.log(form);
 		document.body.appendChild(form);
-		form.submit();
+		//form.submit();
 	    }
 	};
 
-	FB.api("/me?fields=name,gender,birthday,email,hometown",
+	FB.api("/me?fields=name,email, gender, age_range, hometown",
 	       handleResponse);
 
 	FB.api("/me/picture?width=320&height=320",
 	       handleResponse);
 
-    }, {scope: 'public_profile,email,public_profile,user_birthday,user_hometown,user_location'});
+    }, {scope: 'public_profile,email,user_hometown'});
 }
 
 (function(d, s, id){
