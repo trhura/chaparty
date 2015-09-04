@@ -19,6 +19,16 @@ import (
 )
 
 var FbApp = fb.New("526791527487217", "e314e5fc761425d59ea9e2666c63e108")
+var aboutParams = fb.Params{
+	"method":       fb.GET,
+	"relative_url": "me",
+	"fields":       "name,email,gender,age_range,hometown",
+}
+
+var photoParams = fb.Params{
+	"method":       fb.GET,
+	"relative_url": "me/picture?width=320&height=320&redirect=false",
+}
 
 func init() {
 	http.HandleFunc("/static/", StaticHandler)
@@ -70,7 +80,6 @@ type Log struct {
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	context := appengine.NewContext(r)
-	client := urlfetch.Client(context)
 
 	r.ParseForm()
 	access_token := r.FormValue("access_token")
@@ -78,15 +87,33 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	context.Infof("party = %s", party)
 
 	session := FbApp.Session(access_token)
-	session.HttpClient = client
+	session.HttpClient = urlfetch.Client(context)
 	err := session.Validate()
 	check(err, context)
 
-	aboutResp, err := session.Get("/me", fb.Params{
-		"fields": "name,email,gender,age_range,hometown",
-	})
+	results, err := session.BatchApi(aboutParams, photoParams)
 	check(err, context)
 
+	aboutBatch, err := results[0].Batch()
+	check(err, context)
+	photoBatch, err := results[1].Batch()
+	check(err, context)
+
+	aboutResp := aboutBatch.Result
+	photoResp := photoBatch.Result
+
+	SaveAboutUser(&aboutResp, context)
+	profilePicture := GetUserPhoto(&photoResp, context)
+
+	imagebytes := addLogo(profilePicture, party, context)
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
+	_, err = w.Write(imagebytes)
+	check(err, context)
+}
+
+func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
 	var log Log
 	aboutResp.Decode(&log)
 
@@ -94,26 +121,20 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	aboutResp.DecodeField("age_range", &ageRange)
 	log.AgeRange = ageRange["min"]
 
-	context.Infof("Name = %s", log.Name)
-	context.Infof("Email = %s", log.Email)
-	context.Infof("Gender = %s", log.Gender)
-	context.Infof("AgeRange = %s", log.AgeRange)
-	context.Infof("Hometown = %s", log.Hometown)
-
-	_, err = datastore.Put(context,
+	_, err := datastore.Put(context,
 		datastore.NewIncompleteKey(context, "log", nil),
 		&log)
 	check(err, context)
+}
 
-	photoResp, err := session.Get("/me/picture?width=320&height=320&redirect=false", nil)
-	check(err, context)
-
+func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image {
 	var dataField fb.Result
 	photoResp.DecodeField("data", &dataField)
 
 	var url string
 	dataField.DecodeField("url", &url)
 
+	client := urlfetch.Client(context)
 	resp, err := client.Get(url)
 	data, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -123,10 +144,5 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	profilePicture, _, err := image.Decode(reader)
 	check(err, context)
 
-	imagebytes := addLogo(&profilePicture, party, context)
-
-	w.Header().Set("Content-Type", "image/jpeg")
-	w.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
-	_, err = w.Write(imagebytes)
-	check(err, context)
+	return &profilePicture
 }
