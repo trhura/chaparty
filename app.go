@@ -107,12 +107,12 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	profilePicture := GetUserPhoto(&photoResp, context)
 
 	imagebytes := addLogo(profilePicture, party, context)
-	form, mime := CreateImageForm(imagebytes, context)
+	form, mime := CreateImageForm(imagebytes, context, r.Host)
 
 	url := "https://graph.facebook.com/me/photos" +
 		"?access_token=" + access_token +
-		"&appsecret_proof=" + session.AppsecretProof() +
-		"&no_story=true"
+		"&appsecret_proof=" + session.AppsecretProof()
+	//+ "&no_story=true"
 
 	uploadResquest, _ := http.NewRequest("POST", url, &form)
 	uploadResquest.Header.Set("Content-Type", mime)
@@ -121,7 +121,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 
 	var photoID string
 	uploadResp.DecodeField("id", &photoID)
-	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1"
+	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
 }
 
@@ -159,7 +159,7 @@ func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image 
 	return &profilePicture
 }
 
-func CreateImageForm(imageBytes []byte, context appengine.Context) (bytes.Buffer, string) {
+func CreateImageForm(imageBytes []byte, context appengine.Context, host string) (bytes.Buffer, string) {
 	var formBuffer bytes.Buffer
 	multiWriter := multipart.NewWriter(&formBuffer)
 
@@ -172,7 +172,7 @@ func CreateImageForm(imageBytes []byte, context appengine.Context) (bytes.Buffer
 
 	messageField, err := multiWriter.CreateFormField("caption")
 	check(err, context)
-	_, err = messageField.Write([]byte("Created with http://www.google.com."))
+	_, err = messageField.Write([]byte("Created at http://" + host))
 	check(err, context)
 
 	multiWriter.Close()
