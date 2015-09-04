@@ -3,10 +3,11 @@ package app
 import (
 	"bytes"
 	"image"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"os"
-	"strconv"
 
 	_ "image/jpeg"
 	_ "image/png"
@@ -106,11 +107,22 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	profilePicture := GetUserPhoto(&photoResp, context)
 
 	imagebytes := addLogo(profilePicture, party, context)
+	form, mime := CreateImageForm(imagebytes, context)
 
-	w.Header().Set("Content-Type", "image/jpeg")
-	w.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
-	_, err = w.Write(imagebytes)
+	url := "https://graph.facebook.com/me/photos" +
+		"?access_token=" + access_token +
+		"&appsecret_proof=" + session.AppsecretProof() +
+		"&no_story=true"
+
+	uploadResquest, _ := http.NewRequest("POST", url, &form)
+	uploadResquest.Header.Set("Content-Type", mime)
+	uploadResp, _ := session.Request(uploadResquest)
 	check(err, context)
+
+	var photoID string
+	uploadResp.DecodeField("id", &photoID)
+	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1"
+	http.Redirect(w, r, redirectUrl, 303)
 }
 
 func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
@@ -145,4 +157,25 @@ func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image 
 	check(err, context)
 
 	return &profilePicture
+}
+
+func CreateImageForm(imageBytes []byte, context appengine.Context) (bytes.Buffer, string) {
+	var formBuffer bytes.Buffer
+	multiWriter := multipart.NewWriter(&formBuffer)
+
+	imageField, err := multiWriter.CreateFormFile("source", "election.png")
+	check(err, context)
+
+	imageBuffer := bytes.NewBuffer(imageBytes)
+	_, err = io.Copy(imageField, imageBuffer)
+	check(err, context)
+
+	messageField, err := multiWriter.CreateFormField("caption")
+	check(err, context)
+	_, err = messageField.Write([]byte("Created with http://www.google.com."))
+	check(err, context)
+
+	multiWriter.Close()
+
+	return formBuffer, multiWriter.FormDataContentType()
 }
