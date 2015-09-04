@@ -17,11 +17,12 @@ light_colors = [
     "#ccff90",
     #"#ff9e80",
     "#ffff8d",
-    "#f5f5f5",
+    #"#f5f5f5",
 ]
 
 dark_colors = [
-    "#ff6600",
+#    "#ff6600",
+    "#ffeeff"
 ]
 
 def generate_svg(imagepath):

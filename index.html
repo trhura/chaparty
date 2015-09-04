@@ -7,6 +7,7 @@
     <title>Yway Gya Mae</title>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/site.css">
+    <script type="text/javascript" src="/static/ajax.js"></script>
 </head>
 
 <body>
@@ -157,69 +158,46 @@
 window.fbAsyncInit = function() {
     FB.init({
 	appId      : '526791527487217',
-//	appSecret  : 'e314e5fc761425d59ea9e2666c63e108',
 	xfbml      : false,
 	version    : 'v2.4',
-	status: true,
+	status : true,
 	cookie: true
     })
 };
 
 function proceed (party) {
-    FB.login(function(){
-	var url, width, height = null;
-	var params = {};
+    FB.login(function(response){
+	//console.log(response);
 
-	var handleResponse = function (response) {
-	    if (!response || response.error) {
-		console.error (response);
-	    }
+	if (response.authResponse) {
+	    var form = document.createElement('form');
+	    form.method = 'post';
+	    form.action = '/';
 
-	    params.name = params.name || response.name;
-	    params.email = params.email || response.email;
-	    params.gender = params.gender || response.gender;
-	    params.agerange = params.agerange || response.age_range && response.age_range.min;
-	    params.hometown = params.hometown || response.hometown && response.hometown.name;
-	    params.party = party;
+	    var inputToken = document.createElement("INPUT");
+	    inputToken.type = "hidden";
+	    inputToken.name = 'access_token';
+	    inputToken.value = FB.getAuthResponse()['accessToken'];
+	    form.appendChild(inputToken);
 
-	    if (response.data) {
-		params.url = params.url || response.data.url;
-		params.width = params.width || response.data.width;
-		params.height = params.height || response.data.height;
-	    }
+	    var inputToken = document.createElement("INPUT");
+	    inputToken.type = "hidden";
+	    inputToken.name = 'userID';
+	    inputToken.value =FB.getAuthResponse()['userID'];
+	    form.appendChild(inputToken);
 
-	    if (params.name && params.url) {
-		console.log ("Both API calls finished.");
-		console.log (params);
-		console.log (response);
+	    var inputParty = document.createElement("INPUT");
+	    inputParty.type = "hidden";
+	    inputParty.name = 'party';
+	    inputParty.value = party;
+	    form.appendChild(inputParty);
 
-		var form = document.createElement('form');
-		form.method = 'post';
-		form.action = '/';
+	    console.log(form);
+	    document.body.appendChild(form);
+	    form.submit();
+	}
 
-		for (var name in params) {
-		    if (params.hasOwnProperty(name)) {
-		    input = document.createElement("INPUT");
-		    input.type = "hidden";
-		    input.name = name;
-		    input.value = params[name];
-		    form.appendChild(input);
-		    }
-		}
-
-		console.log(form);
-		document.body.appendChild(form);
-		//form.submit();
-	    }
-	};
-
-	FB.api("/me?fields=name,email, gender, age_range, hometown",
-	       handleResponse);
-
-	FB.api("/me/picture?width=320&height=320",
-	       handleResponse);
-
-    }, {scope: 'public_profile,email,user_hometown'});
+    }, {scope: 'public_profile,email,user_hometown,publish_actions'});
 }
 
 (function(d, s, id){
