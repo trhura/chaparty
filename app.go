@@ -52,6 +52,8 @@ func StaticHandler(w http.ResponseWriter, r *http.Request) {
 
 func MainHandler(w http.ResponseWriter, r *http.Request) {
 	switch {
+	case r.URL.Path == "/privacy":
+		w.Write([]byte("Coming Soon"))
 	case r.URL.Path != "/":
 		http.NotFound(w, r)
 	case r.Method == "GET":
