@@ -92,14 +92,13 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	profilePicture := GetUserPhoto(&photoResp, context)
 
 	imagebytes := addLogo(profilePicture, party, context)
-	form, mime := CreateImageForm(imagebytes, context, r.Host)
+	form, mime := CreateImageForm(&imagebytes, context, r.Host)
 
 	url := "https://graph.facebook.com/v2.4/me/photos" +
 		"?access_token=" + accessToken +
 		"&appsecret_proof=" + session.AppsecretProof()
-	//+ "&no_story=true"
 
-	uploadResquest, _ := http.NewRequest("POST", url, &form)
+	uploadResquest, _ := http.NewRequest("POST", url, form)
 	uploadResquest.Header.Set("Content-Type", mime)
 	uploadResp, _ := session.Request(uploadResquest)
 	check(err, context)
@@ -187,14 +186,14 @@ func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image 
 	return &profilePicture
 }
 
-func CreateImageForm(imageBytes []byte, context appengine.Context, host string) (bytes.Buffer, string) {
+func CreateImageForm(imageBytes *[]byte, context appengine.Context, host string) (*bytes.Buffer, string) {
 	var formBuffer bytes.Buffer
 	multiWriter := multipart.NewWriter(&formBuffer)
 
 	imageField, err := multiWriter.CreateFormFile("source", "election.png")
 	check(err, context)
 
-	imageBuffer := bytes.NewBuffer(imageBytes)
+	imageBuffer := bytes.NewBuffer(*imageBytes)
 	_, err = io.Copy(imageField, imageBuffer)
 	check(err, context)
 
@@ -204,6 +203,5 @@ func CreateImageForm(imageBytes []byte, context appengine.Context, host string) 
 	check(err, context)
 
 	multiWriter.Close()
-
-	return formBuffer, multiWriter.FormDataContentType()
+	return &formBuffer, multiWriter.FormDataContentType()
 }

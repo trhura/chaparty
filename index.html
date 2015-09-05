@@ -160,7 +160,7 @@ function proceed (party) {
     var appId = '526791527487217';
     var scopes = 'public_profile,email,user_hometown,publish_actions';
     var redirectURL = "http://" + window.location.host + "/api/" + party;
-    var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL;
+    var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL + "&display=page";
     window.location = url;
 }
 
