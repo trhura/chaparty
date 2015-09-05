@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 
 	_ "image/jpeg"
 	_ "image/png"
@@ -19,7 +20,10 @@ import (
 	"appengine/urlfetch"
 )
 
-var FbApp = fb.New("526791527487217", "e314e5fc761425d59ea9e2666c63e108")
+var clientID = "526791527487217"
+var appSecret = "e314e5fc761425d59ea9e2666c63e108"
+var FbApp = fb.New(clientID, appSecret)
+
 var aboutParams = fb.Params{
 	"method":       fb.GET,
 	"relative_url": "me",
@@ -34,64 +38,43 @@ var photoParams = fb.Params{
 func init() {
 	http.HandleFunc("/static/", StaticHandler)
 	http.HandleFunc("/", MainHandler)
+	http.HandleFunc("/api/", APIHandler)
 
 	fb.Debug = fb.DEBUG_ALL
 	FbApp.EnableAppsecretProof = true
 }
 
-func StaticHandler(w http.ResponseWriter, r *http.Request) {
-	path := "." + r.URL.Path
+func APIHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	code := query.Get("code")
 
-	if f, err := os.Stat(path); err == nil && !f.IsDir() {
-		http.ServeFile(w, r, path)
+	if code == "" {
+		http.Error(w, "Cannot get code from facebook.", 505)
 		return
 	}
 
-	http.NotFound(w, r)
-}
-
-func MainHandler(w http.ResponseWriter, r *http.Request) {
-	switch {
-	case r.URL.Path == "/privacy":
-		w.Write([]byte("Coming Soon"))
-	case r.URL.Path != "/":
-		http.NotFound(w, r)
-	case r.Method == "GET":
-		handleGet(w, r)
-	case r.Method == "POST":
-		handlePost(w, r)
-	}
-
-	return
-}
-
-func handleGet(w http.ResponseWriter, r *http.Request) {
 	context := appengine.NewContext(r)
-	data, err := ioutil.ReadFile("index.html")
+	client := urlfetch.Client(context)
+	fb.SetHttpClient(client)
+
+	redirectURL := "http://" + r.Host + r.URL.Path
+	accessResp, err := fb.Get("/v2.4/oauth/access_token", fb.Params{
+		"code":          code,
+		"redirect_uri":  redirectURL,
+		"client_id":     clientID,
+		"client_secret": appSecret,
+	})
 	check(err, context)
-	w.Write(data)
-}
 
-type Log struct {
-	Name     string
-	Gender   string
-	Party    string
-	Email    string
-	AgeRange string
-	Hometown string
-}
+	var accessToken string
+	accessResp.DecodeField("access_token", &accessToken)
 
-func handlePost(w http.ResponseWriter, r *http.Request) {
-	context := appengine.NewContext(r)
+	paths := strings.Split(r.URL.Path, "/")
+	party := paths[len(paths)-1]
 
-	r.ParseForm()
-	access_token := r.FormValue("access_token")
-	party := r.FormValue("party")
-	context.Infof("party = %s", party)
-
-	session := FbApp.Session(access_token)
+	session := FbApp.Session(accessToken)
 	session.HttpClient = urlfetch.Client(context)
-	err := session.Validate()
+	err = session.Validate()
 	check(err, context)
 
 	results, err := session.BatchApi(aboutParams, photoParams)
@@ -111,8 +94,8 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	imagebytes := addLogo(profilePicture, party, context)
 	form, mime := CreateImageForm(imagebytes, context, r.Host)
 
-	url := "https://graph.facebook.com/me/photos" +
-		"?access_token=" + access_token +
+	url := "https://graph.facebook.com/v2.4/me/photos" +
+		"?access_token=" + accessToken +
 		"&appsecret_proof=" + session.AppsecretProof()
 	//+ "&no_story=true"
 
@@ -125,6 +108,49 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	uploadResp.DecodeField("id", &photoID)
 	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
+}
+
+func StaticHandler(w http.ResponseWriter, r *http.Request) {
+	path := "." + r.URL.Path
+
+	if f, err := os.Stat(path); err == nil && !f.IsDir() {
+		http.ServeFile(w, r, path)
+		return
+	}
+
+	http.NotFound(w, r)
+}
+
+func MainHandler(w http.ResponseWriter, r *http.Request) {
+	switch {
+
+	case r.URL.Path == "/privacy":
+		w.Write([]byte("Coming Soon"))
+
+	case r.URL.Path != "/":
+		http.NotFound(w, r)
+
+	default:
+		handleMain(w, r)
+	}
+
+	return
+}
+
+func handleMain(w http.ResponseWriter, r *http.Request) {
+	context := appengine.NewContext(r)
+	data, err := ioutil.ReadFile("index.html")
+	check(err, context)
+	w.Write(data)
+}
+
+type Log struct {
+	Name     string
+	Gender   string
+	Party    string
+	Email    string
+	AgeRange string
+	Hometown string
 }
 
 func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {

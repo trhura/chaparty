@@ -155,58 +155,14 @@
 
 
 <script type="text/javascript">
-window.fbAsyncInit = function() {
-    FB.init({
-	appId      : '526791527487217',
-	xfbml      : false,
-	version    : 'v2.4',
-	status : true,
-	cookie: true
-    })
-};
 
 function proceed (party) {
-    FB.login(function(response){
-	//console.log(response);
-
-	if (response.authResponse) {
-	    var form = document.createElement('form');
-	    form.method = 'post';
-	    form.action = '/';
-
-	    var inputToken = document.createElement("INPUT");
-	    inputToken.type = "hidden";
-	    inputToken.name = 'access_token';
-	    inputToken.value = FB.getAuthResponse()['accessToken'];
-	    form.appendChild(inputToken);
-
-	    var inputToken = document.createElement("INPUT");
-	    inputToken.type = "hidden";
-	    inputToken.name = 'userID';
-	    inputToken.value =FB.getAuthResponse()['userID'];
-	    form.appendChild(inputToken);
-
-	    var inputParty = document.createElement("INPUT");
-	    inputParty.type = "hidden";
-	    inputParty.name = 'party';
-	    inputParty.value = party;
-	    form.appendChild(inputParty);
-
-	    console.log(form);
-	    document.body.appendChild(form);
-	    form.submit();
-	}
-
-    }, {scope: 'public_profile,email,user_hometown,publish_actions'});
+    var appId = '526791527487217';
+    var scopes = 'public_profile,email,user_hometown,publish_actions';
+    var redirectURL = "http://" + window.location.host + "/api/" + party;
+    var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL;
+    window.location = url;
 }
-
-(function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 </script>
 
