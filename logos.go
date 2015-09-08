@@ -34,7 +34,6 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 	if logoImages, ok := THELOGOIMAGES[logo]; ok {
 		randi := rand.Intn(len(logoImages))
 		logoImage := logoImages[randi]
-		context.Infof("=================== %d %d =======================", len(logoImages), randi)
 
 		start := profileImage.Bounds().Size()
 		start = start.Sub(image.Pt(5, 5))
