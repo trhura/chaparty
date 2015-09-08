@@ -25,8 +25,7 @@ var FbApp = fb.New(clientID, APPSECRET)
 
 var aboutParams = fb.Params{
 	"method":       fb.GET,
-	"relative_url": "me",
-	"fields":       "name,email,gender,age_range,hometown",
+	"relative_url": "me?fields=name,email,gender,age_range,address,location",
 }
 
 var photoParams = fb.Params{
@@ -87,7 +86,9 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	aboutResp := aboutBatch.Result
 	photoResp := photoBatch.Result
 
+	context.Infof("Resp - %s", aboutResp)
 	SaveAboutUser(&aboutResp, context)
+
 	profilePicture := GetUserPhoto(&photoResp, context)
 
 	imagebytes := addLogo(profilePicture, party, context)
@@ -123,7 +124,10 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 	switch {
 
 	case r.URL.Path == "/privacy":
-		w.Write([]byte("Coming Soon"))
+		context := appengine.NewContext(r)
+		data, err := ioutil.ReadFile("privacy.html")
+		check(err, context)
+		w.Write(data)
 
 	case r.URL.Path != "/":
 		http.NotFound(w, r)
@@ -148,16 +152,19 @@ type Log struct {
 	Party    string
 	Email    string
 	AgeRange string
-	Hometown string
+	Location string
 }
 
 func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
 	var log Log
 	aboutResp.Decode(&log)
 
-	var ageRange map[string]string
+	var ageRange, location map[string]string
+	aboutResp.DecodeField("location", &location)
 	aboutResp.DecodeField("age_range", &ageRange)
+
 	log.AgeRange = ageRange["min"]
+	log.Location = location["name"]
 
 	_, err := datastore.Put(context,
 		datastore.NewIncompleteKey(context, "log", nil),
