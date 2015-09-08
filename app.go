@@ -21,8 +21,7 @@ import (
 )
 
 var clientID = "526791527487217"
-var appSecret = "e314e5fc761425d59ea9e2666c63e108"
-var FbApp = fb.New(clientID, appSecret)
+var FbApp = fb.New(clientID, APPSECRET)
 
 var aboutParams = fb.Params{
 	"method":       fb.GET,
@@ -62,7 +61,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 		"code":          code,
 		"redirect_uri":  redirectURL,
 		"client_id":     clientID,
-		"client_secret": appSecret,
+		"client_secret": APPSECRET,
 	})
 	check(err, context)
 
