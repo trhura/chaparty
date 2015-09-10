@@ -33,8 +33,8 @@ body {
 }
 
 .no-gutter > [class*="col-"] {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 .heading img {
@@ -49,7 +49,7 @@ body {
 .portfolio-box {
     display: block;
     margin: 3px auto;
-    max-width: 320px !important;
+    max-width: 200px !important;
     position: relative;
 }
 
@@ -60,36 +60,19 @@ body {
    padding: 5px 10px;
    width: 35%;
    background: rgba(0, 0, 0, .5);
-   color: #f3f3f3;
+   color: #cccccc;
    font-size: 13px;
    line-height: 1.5em;
+}
+
+.hover .portfolio-box-title {
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffffff;
 }
 
 .portfolio-box-caption {
     font-size: 9px;
     text-align: center;
     font-weight: bold;
-}
-
-.portfolio-box .portfolio-box-overlay {
-    background-color: rgba(229, 57, 53, 0.8);
-    display: block;
-    height: 100%;
-    width: 100%;
-    opacity: 0;
-    bottom: 0;
-    transition: all 0.35s ease 0s;
-    position: absolute;
-}
-
-.portfolio-box .portfolio-box-overlay .portfolio-box-overlay-content {
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-}
-
-.portfolio-box:hover .portfolio-box-overlay {
-    opacity: 1;
+    margin-bottom: 10px;
 }
