@@ -12,10 +12,10 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 
 light_colors = [
     "#ffcdd2",
-    #"#ede7f6",
-    #"#b9f6ca",
+    "#ede7f6",
+    "#b9f6ca",
     "#ccff90",
-    #"#ff9e80",
+    "#ff9e80",
     "#ffff8d",
     #"#f5f5f5",
 ]
@@ -69,6 +69,9 @@ def generate_svg(imagepath):
         subprocess.call("""
         mogrify -bordercolor black -trim  +repage -resize x65 -format png -quality 100 %s
         """  %(tmpfilepath), shell=True)
+        subprocess.call("""
+        optipng %s
+        """ %(tmpfilepath), shell=True)
 
         os.rename (tmpfilepath, os.path.join(outputdir, str(i)))
 
