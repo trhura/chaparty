@@ -36,7 +36,8 @@ var photoParams = fb.Params{
 func init() {
 	http.HandleFunc("/static/", StaticHandler)
 	http.HandleFunc("/", MainHandler)
-	http.HandleFunc("/api/", APIHandler)
+	http.HandleFunc("/web/", APIHandler)
+	http.HandleFunc("/mobile/", APIHandler)
 
 	fb.Debug = fb.DEBUG_ALL
 	FbApp.EnableAppsecretProof = true
@@ -69,6 +70,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	paths := strings.Split(r.URL.Path, "/")
 	party := paths[len(paths)-1]
+	webormobile := paths[len(paths)-2]
 
 	session := FbApp.Session(accessToken)
 	session.HttpClient = urlfetch.Client(context)
@@ -86,7 +88,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	aboutResp := aboutBatch.Result
 	photoResp := photoBatch.Result
 
-	context.Infof("Resp - %s", aboutResp)
+	//context.Infof("Resp - %s", aboutResp)
 	SaveAboutUser(&aboutResp, context)
 
 	profilePicture := GetUserPhoto(&photoResp, context)
@@ -105,8 +107,13 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	var photoID string
 	uploadResp.DecodeField("id", &photoID)
-	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
-	http.Redirect(w, r, redirectUrl, 303)
+
+	if webormobile == "web" {
+		redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
+		http.Redirect(w, r, redirectUrl, 303)
+	} else {
+		w.Write([]byte(photoID))
+	}
 }
 
 func StaticHandler(w http.ResponseWriter, r *http.Request) {
