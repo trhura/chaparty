@@ -48,8 +48,6 @@ func init() {
 }
 
 func WebHandler(w http.ResponseWriter, r *http.Request) {
-	paths := strings.Split(r.URL.Path, "/")
-	party := paths[len(paths)-1]
 	query := r.URL.Query()
 	code := query.Get("code")
 
@@ -74,6 +72,8 @@ func WebHandler(w http.ResponseWriter, r *http.Request) {
 	var accessToken string
 	accessResp.DecodeField("access_token", &accessToken)
 
+	paths := strings.Split(r.URL.Path, "/")
+	party := paths[len(paths)-1]
 	photoID := UploadPhoto(accessToken, party, context)
 	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
