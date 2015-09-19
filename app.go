@@ -5,10 +5,12 @@ import (
 	"image"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	_ "image/jpeg"
 	_ "image/png"
@@ -40,7 +42,9 @@ func init() {
 	http.HandleFunc("/mobile/", MobileHandler)
 
 	fb.Debug = fb.DEBUG_ALL
-	FbApp.EnableAppsecretProof = false
+	FbApp.EnableAppsecretProof = true
+
+	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 func WebHandler(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +75,7 @@ func WebHandler(w http.ResponseWriter, r *http.Request) {
 	accessResp.DecodeField("access_token", &accessToken)
 
 	photoID := UploadPhoto(accessToken, party, context)
-	redirectUrl	:= "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
+	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
 }
 
@@ -82,9 +86,9 @@ func MobileHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken := query.Get("access_token")
 	context := appengine.NewContext(r)
 
-	photoID := UploadPhoto(accessToken, party, context)	
+	photoID := UploadPhoto(accessToken, party, context)
 	w.Write([]byte(photoID))
-}	
+}
 
 func UploadPhoto(accessToken string, party string, context appengine.Context) string {
 	session := FbApp.Session(accessToken)
@@ -94,7 +98,7 @@ func UploadPhoto(accessToken string, party string, context appengine.Context) st
 
 	results, err := session.BatchApi(aboutParams, photoParams)
 	check(err, context)
-	
+
 	aboutBatch, err := results[0].Batch()
 	check(err, context)
 	photoBatch, err := results[1].Batch()
@@ -121,7 +125,7 @@ func UploadPhoto(accessToken string, party string, context appengine.Context) st
 
 	var photoID string
 	uploadResp.DecodeField("id", &photoID)
-	
+
 	return photoID
 }
 
@@ -189,7 +193,7 @@ func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
 }
 
 func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image {
-     	var dataField fb.Result
+	var dataField fb.Result
 	photoResp.DecodeField("data", &dataField)
 
 	var url string
