@@ -36,14 +36,16 @@ var photoParams = fb.Params{
 func init() {
 	http.HandleFunc("/static/", StaticHandler)
 	http.HandleFunc("/", MainHandler)
-	http.HandleFunc("/web/", APIHandler)
-	http.HandleFunc("/mobile/", APIHandler)
+	http.HandleFunc("/web/", WebHandler)
+	http.HandleFunc("/mobile/", MobileHandler)
 
 	fb.Debug = fb.DEBUG_ALL
-	FbApp.EnableAppsecretProof = true
+	FbApp.EnableAppsecretProof = false
 }
 
-func APIHandler(w http.ResponseWriter, r *http.Request) {
+func WebHandler(w http.ResponseWriter, r *http.Request) {
+	paths := strings.Split(r.URL.Path, "/")
+	party := paths[len(paths)-1]
 	query := r.URL.Query()
 	code := query.Get("code")
 
@@ -68,18 +70,31 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	var accessToken string
 	accessResp.DecodeField("access_token", &accessToken)
 
+	photoID := UploadPhoto(accessToken, party, context)
+	redirectUrl	:= "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
+	http.Redirect(w, r, redirectUrl, 303)
+}
+
+func MobileHandler(w http.ResponseWriter, r *http.Request) {
 	paths := strings.Split(r.URL.Path, "/")
 	party := paths[len(paths)-1]
-	webormobile := paths[len(paths)-2]
+	query := r.URL.Query()
+	accessToken := query.Get("access_token")
+	context := appengine.NewContext(r)
 
+	photoID := UploadPhoto(accessToken, party, context)	
+	w.Write([]byte(photoID))
+}	
+
+func UploadPhoto(accessToken string, party string, context appengine.Context) string {
 	session := FbApp.Session(accessToken)
 	session.HttpClient = urlfetch.Client(context)
-	err = session.Validate()
+	err := session.Validate()
 	check(err, context)
 
 	results, err := session.BatchApi(aboutParams, photoParams)
 	check(err, context)
-
+	
 	aboutBatch, err := results[0].Batch()
 	check(err, context)
 	photoBatch, err := results[1].Batch()
@@ -88,13 +103,12 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	aboutResp := aboutBatch.Result
 	photoResp := photoBatch.Result
 
-	//context.Infof("Resp - %s", aboutResp)
 	SaveAboutUser(&aboutResp, context)
 
 	profilePicture := GetUserPhoto(&photoResp, context)
 
 	imagebytes := addLogo(profilePicture, party, context)
-	form, mime := CreateImageForm(&imagebytes, context, r.Host)
+	form, mime := CreateImageForm(&imagebytes, context)
 
 	url := "https://graph.facebook.com/v2.4/me/photos" +
 		"?access_token=" + accessToken +
@@ -107,13 +121,8 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	var photoID string
 	uploadResp.DecodeField("id", &photoID)
-
-	if webormobile == "web" {
-		redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
-		http.Redirect(w, r, redirectUrl, 303)
-	} else {
-		w.Write([]byte(photoID))
-	}
+	
+	return photoID
 }
 
 func StaticHandler(w http.ResponseWriter, r *http.Request) {
@@ -180,7 +189,7 @@ func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
 }
 
 func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image {
-	var dataField fb.Result
+     	var dataField fb.Result
 	photoResp.DecodeField("data", &dataField)
 
 	var url string
@@ -199,7 +208,7 @@ func GetUserPhoto(photoResp *fb.Result, context appengine.Context) *image.Image 
 	return &profilePicture
 }
 
-func CreateImageForm(imageBytes *[]byte, context appengine.Context, host string) (*bytes.Buffer, string) {
+func CreateImageForm(imageBytes *[]byte, context appengine.Context) (*bytes.Buffer, string) {
 	var formBuffer bytes.Buffer
 	multiWriter := multipart.NewWriter(&formBuffer)
 
@@ -208,11 +217,6 @@ func CreateImageForm(imageBytes *[]byte, context appengine.Context, host string)
 
 	imageBuffer := bytes.NewBuffer(*imageBytes)
 	_, err = io.Copy(imageField, imageBuffer)
-	check(err, context)
-
-	messageField, err := multiWriter.CreateFormField("caption")
-	check(err, context)
-	_, err = messageField.Write([]byte("Created at http://" + host))
 	check(err, context)
 
 	multiWriter.Close()
