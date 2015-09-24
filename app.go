@@ -77,6 +77,7 @@ func WebHandler(w http.ResponseWriter, r *http.Request) {
 	photoID := UploadPhoto(accessToken, party, context)
 	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
+	//w.Write([]byte(accessToken))
 }
 
 func MobileHandler(w http.ResponseWriter, r *http.Request) {
