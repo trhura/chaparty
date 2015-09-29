@@ -67,11 +67,8 @@ def generate_svg(imagepath):
         tmpfilepath = os.path.join(root_path, filename + '.png')
         subprocess.call("inkscape -z -e %s %s"  %(tmpfilepath, tmp_svg_file), shell=True)
         subprocess.call("""
-        mogrify -bordercolor black -trim  +repage -resize x65 -format png -quality 100 %s
+        mogrify -bordercolor black -trim  +repage -resize x70 -format png -quality 100 %s
         """  %(tmpfilepath), shell=True)
-        subprocess.call("""
-        optipng %s
-        """ %(tmpfilepath), shell=True)
 
         os.rename (tmpfilepath, os.path.join(outputdir, str(i)))
 
