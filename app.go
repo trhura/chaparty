@@ -94,7 +94,7 @@ func UploadPhoto(accessToken string, party string, context appengine.Context) st
 	aboutResp := aboutBatch.Result
 	photoResp := photoBatch.Result
 
-	SaveAboutUser(&aboutResp, context)
+	SaveAboutUser(&aboutResp, party, context)
 
 	profilePicture := GetUserPhoto(&photoResp, context)
 
@@ -158,20 +158,22 @@ type Log struct {
 	Gender   string
 	Party    string
 	Email    string
-	AgeRange string
+	AgeRange int
 	Location string
 }
 
-func SaveAboutUser(aboutResp *fb.Result, context appengine.Context) {
+func SaveAboutUser(aboutResp *fb.Result, party string, context appengine.Context) {
 	var log Log
 	aboutResp.Decode(&log)
 
-	var ageRange, location map[string]string
+	var ageRange map[string]int
+	var location map[string]string
 	aboutResp.DecodeField("location", &location)
 	aboutResp.DecodeField("age_range", &ageRange)
 
 	log.AgeRange = ageRange["min"]
 	log.Location = location["name"]
+	log.Party = party
 
 	_, err := datastore.Put(context,
 		datastore.NewIncompleteKey(context, "log", nil),

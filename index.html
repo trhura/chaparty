@@ -145,7 +145,7 @@
 
 <script type="text/javascript">
 function proceed (party) {
-if(confirm("\nThis will change facebook profile photo. Are you sure?\n")){
+if(confirm("\nThis will change your facebook profile photo. Are you sure?\n")){
 var appId = '526791527487217'; var scopes = 'public_profile,email,user_location,publish_actions'; var redirectURL = "http://" + window.location.host + "/web/" + party; var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL + "&display=page"; window.location = url;}}
 
 </script>
