@@ -39,11 +39,9 @@ func init() {
 	http.HandleFunc("/static/", StaticHandler)
 	http.HandleFunc("/", MainHandler)
 	http.HandleFunc("/web/", WebHandler)
-	http.HandleFunc("/mobile/", MobileHandler)
 
 	fb.Debug = fb.DEBUG_ALL
 	FbApp.EnableAppsecretProof = true
-
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
@@ -77,18 +75,6 @@ func WebHandler(w http.ResponseWriter, r *http.Request) {
 	photoID := UploadPhoto(accessToken, party, context)
 	redirectUrl := "https://facebook.com/photo.php?fbid=" + photoID + "&makeprofile=1&prof"
 	http.Redirect(w, r, redirectUrl, 303)
-	//w.Write([]byte(accessToken))
-}
-
-func MobileHandler(w http.ResponseWriter, r *http.Request) {
-	paths := strings.Split(r.URL.Path, "/")
-	party := paths[len(paths)-1]
-	query := r.URL.Query()
-	accessToken := query.Get("access_token")
-	context := appengine.NewContext(r)
-
-	photoID := UploadPhoto(accessToken, party, context)
-	w.Write([]byte(photoID))
 }
 
 func UploadPhoto(accessToken string, party string, context appengine.Context) string {
