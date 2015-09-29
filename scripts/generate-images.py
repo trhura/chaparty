@@ -11,13 +11,15 @@ from PIL import Image
 root_path = os.path.dirname(os.path.abspath(__file__))
 
 light_colors = [
-    "#ffcdd2",
-    "#ede7f6",
-    "#b9f6ca",
-    "#ccff90",
-    "#ff9e80",
-    "#ffff8d",
-    #"#f5f5f5",
+    "#B2EBF2",
+    "#CFD8DC",
+    "#DCEDC8",
+    "#E1BEE7",
+    "#F0F4C3",
+    "#F5F5F5",
+    "#FFCDD2",
+    "#FFE0B2",
+    "#FFF9C4",
 ]
 
 dark_colors = [
@@ -55,10 +57,10 @@ def generate_svg(imagepath):
         style = 'fill:' + bg + style[12:]
         recttag.setAttribute('style', style)
 
-        pathtag = tree.getElementsByTagName('path')[0]
-        style = recttag.getAttribute('style')
-        style = 'fill:' + fg + style[12:] + ';stroke-opacity:1'
-        pathtag.setAttribute('style', style)
+        # pathtag = tree.getElementsByTagName('path')[0]
+        # style = recttag.getAttribute('style')
+        # style = 'fill:' + fg + style[12:] + ';stroke-opacity:1'
+        # pathtag.setAttribute('style', style)
 
         tmp_svg_file = os.path.join(root_path, 'tmp.svg')
         with open(tmp_svg_file, 'w') as outSVG:

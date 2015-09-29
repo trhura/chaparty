@@ -539,7 +539,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.5999999"
      inkscape:cx="130.08299"
-     inkscape:cy="353.1186"
+     inkscape:cy="303.1186"
      inkscape:document-units="pt"
      inkscape:current-layer="g3055"
      id="namedview4791"
@@ -600,7 +600,7 @@
                    inkscape:export-ydpi="47.52" />
                 <g
                    id="g6561"
-                   transform="matrix(0.23297393,0,0,0.22690233,163.41091,17.583989)">
+                   transform="matrix(0.23297393,0,0,0.22690233,168.41091,18.192701)">
                   <g
                      transform="translate(165.65172,269.13613)"
                      inkscape:label="Grid_Polar:X3:Y3"
@@ -706,7 +706,7 @@
           <path
              inkscape:connector-curvature="0"
              id="path5175"
-             d="m 198.79146,148.12349 0.44195,-94.575538"
+             d="m 209.41646,148.12349 0.44195,-94.575538"
              style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
         </g>
         <image
