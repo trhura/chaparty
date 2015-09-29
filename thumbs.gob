@@ -1,0 +1,103 @@
+package main
+
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"image"
+	"image/draw"
+	"image/jpeg"
+	"image/png"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+)
+
+var THELOGOIMAGES = loadLogos("./logos")
+var idx = 0
+
+func main() {
+	profileData, err := os.Open("profile.jpg")
+	defer profileData.Close()
+	check(err)
+
+	reader := bufio.NewReader(profileData)
+	profileImage, err := jpeg.Decode(reader)
+	check(err)
+
+	var i = 0
+	for k := range THELOGOIMAGES {
+		bytes := addLogo(&profileImage, k)
+		err := ioutil.WriteFile("./tmp/"+k+".jpg", bytes, 0644)
+		check(err)
+		i++
+	}
+}
+
+func addLogo(profilePtr *image.Image, logo string) []byte {
+	profileImage := *profilePtr
+	destImage := image.NewRGBA(profileImage.Bounds())
+	draw.Draw(destImage, destImage.Bounds(), profileImage, image.ZP, draw.Src)
+
+	if logoImages, ok := THELOGOIMAGES[logo]; ok {
+		if idx >= len(logoImages) {
+			idx = 0
+		}
+
+		logoImage := logoImages[idx]
+		idx++
+		start := profileImage.Bounds().Size()
+		start = start.Sub(image.Pt(5, 5))
+		start = start.Sub(logoImage.Bounds().Size())
+
+		bounds := image.Rectangle{start, start.Add(logoImage.Bounds().Size())}
+		draw.Draw(destImage, bounds, logoImage, image.ZP, draw.Over)
+
+	} else {
+		fmt.Printf("Cannot load logoimage for %s", logo)
+	}
+
+	buffer := new(bytes.Buffer)
+	err := jpeg.Encode(buffer, destImage, nil)
+	check(err)
+
+	return buffer.Bytes()
+}
+
+func loadLogos(globpath string) map[string][]image.Image {
+	logoFolders, err := filepath.Glob(globpath + "/*")
+	check(err)
+
+	logoImagesByName := make(map[string][]image.Image)
+	for _, logoFolder := range logoFolders {
+		logoFiles, err := filepath.Glob(logoFolder + "/*")
+		check(err)
+
+		filename := filepath.Base(logoFolder)
+		logoImages := make([]image.Image, 0)
+
+		for _, logoFile := range logoFiles {
+			//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
+			logoData, err := os.Open(logoFile)
+			defer logoData.Close()
+			check(err)
+
+			reader := bufio.NewReader(logoData)
+			logoImage, err := png.Decode(reader)
+			check(err)
+
+			logoImages = append(logoImages, logoImage)
+		}
+
+		logoImagesByName[filename] = logoImages
+
+	}
+
+	return logoImagesByName
+}
+
+func check(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+	}
+}
