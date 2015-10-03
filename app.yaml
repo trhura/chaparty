@@ -1,4 +1,4 @@
-application: yway-ya-aung
+application: election-1041 
 version: 1
 runtime: go
 api_version: go1
