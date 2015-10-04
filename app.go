@@ -103,6 +103,7 @@ func UploadPhoto(accessToken string, party string, context appengine.Context) st
 
 	url := "https://graph.facebook.com/v2.4/me/photos" +
 		"?access_token=" + accessToken +
+		"&no_story=true" +
 		"&appsecret_proof=" + session.AppsecretProof()
 
 	uploadResquest, _ := http.NewRequest("POST", url, form)
