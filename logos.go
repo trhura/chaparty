@@ -14,7 +14,7 @@ import (
 	"appengine"
 )
 
-var THELOGOIMAGES = loadLogos("./logos", nil)
+var THELOGOIMAGES = loadLogos(nil, "./logos", "./ribbons")
 
 func check(e error, context appengine.Context) {
 	if e != nil {
@@ -53,33 +53,36 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 	return buffer.Bytes()
 }
 
-func loadLogos(globpath string, context appengine.Context) map[string][]image.Image {
-	logoFolders, err := filepath.Glob(globpath + "/*")
-	check(err, context)
-
+func loadLogos(context appengine.Context, globpaths ...string) map[string][]image.Image {
 	logoImagesByName := make(map[string][]image.Image)
-	for _, logoFolder := range logoFolders {
-		logoFiles, err := filepath.Glob(logoFolder + "/*")
+
+	for _, path := range globpaths {
+		logoFolders, err := filepath.Glob(path + "/*")
 		check(err, context)
 
-		filename := filepath.Base(logoFolder)
-		logoImages := make([]image.Image, 0)
-
-		for _, logoFile := range logoFiles {
-			//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
-			logoData, err := os.Open(logoFile)
-			defer logoData.Close()
+		for _, logoFolder := range logoFolders {
+			logoFiles, err := filepath.Glob(logoFolder + "/*")
 			check(err, context)
 
-			reader := bufio.NewReader(logoData)
-			logoImage, err := png.Decode(reader)
-			check(err, context)
+			filename := filepath.Base(logoFolder)
+			logoImages := make([]image.Image, 0)
 
-			logoImages = append(logoImages, logoImage)
+			for _, logoFile := range logoFiles {
+				//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
+				logoData, err := os.Open(logoFile)
+				defer logoData.Close()
+				check(err, context)
+
+				reader := bufio.NewReader(logoData)
+				logoImage, err := png.Decode(reader)
+				check(err, context)
+
+				logoImages = append(logoImages, logoImage)
+			}
+
+			logoImagesByName[filename] = logoImages
+
 		}
-
-		logoImagesByName[filename] = logoImages
-
 	}
 
 	return logoImagesByName

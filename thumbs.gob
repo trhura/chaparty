@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 )
 
-var THELOGOIMAGES = loadLogos("./logos")
+var THELOGOIMAGES = loadLogos("./logos", "./ribbons")
 var idx = 0
 
 func main() {
@@ -64,33 +64,36 @@ func addLogo(profilePtr *image.Image, logo string) []byte {
 	return buffer.Bytes()
 }
 
-func loadLogos(globpath string) map[string][]image.Image {
-	logoFolders, err := filepath.Glob(globpath + "/*")
-	check(err)
-
+func loadLogos(globpaths ...string) map[string][]image.Image {
 	logoImagesByName := make(map[string][]image.Image)
-	for _, logoFolder := range logoFolders {
-		logoFiles, err := filepath.Glob(logoFolder + "/*")
+
+	for _, path := range globpaths {
+		logoFolders, err := filepath.Glob(path + "/*")
 		check(err)
 
-		filename := filepath.Base(logoFolder)
-		logoImages := make([]image.Image, 0)
-
-		for _, logoFile := range logoFiles {
-			//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
-			logoData, err := os.Open(logoFile)
-			defer logoData.Close()
+		for _, logoFolder := range logoFolders {
+			logoFiles, err := filepath.Glob(logoFolder + "/*")
 			check(err)
 
-			reader := bufio.NewReader(logoData)
-			logoImage, err := png.Decode(reader)
-			check(err)
+			filename := filepath.Base(logoFolder)
+			logoImages := make([]image.Image, 0)
 
-			logoImages = append(logoImages, logoImage)
+			for _, logoFile := range logoFiles {
+				//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
+				logoData, err := os.Open(logoFile)
+				defer logoData.Close()
+				check(err)
+
+				reader := bufio.NewReader(logoData)
+				logoImage, err := png.Decode(reader)
+				check(err)
+
+				logoImages = append(logoImages, logoImage)
+			}
+
+			logoImagesByName[filename] = logoImages
+
 		}
-
-		logoImagesByName[filename] = logoImages
-
 	}
 
 	return logoImagesByName
