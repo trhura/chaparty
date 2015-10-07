@@ -160,6 +160,7 @@ type Log struct {
 	Party    string
 	Email    string
 	AgeRange int
+	Location string
 }
 
 func SaveAboutUser(aboutResp *fb.Result, party string, context appengine.Context) {
@@ -167,9 +168,12 @@ func SaveAboutUser(aboutResp *fb.Result, party string, context appengine.Context
 	aboutResp.Decode(&log)
 
 	var ageRange map[string]int
+	var location map[string]string
+	aboutResp.DecodeField("location", &location)
 	aboutResp.DecodeField("age_range", &ageRange)
 
 	log.AgeRange = ageRange["min"]
+	log.Location = location["name"]
 	log.Party = party
 
 	_, err := datastore.Put(context,

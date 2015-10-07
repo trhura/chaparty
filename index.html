@@ -206,7 +206,7 @@
 <script type="text/javascript">
 function proceed (party) {
 if(confirm("\nThis will change your facebook profile photo. Are you sure?\n")){
-var appId = '526791527487217'; var scopes = 'public_profile,publish_actions'; var redirectURL = "http://" + window.location.host + "/web/" + party; var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL + "&display=page"; window.location = url;}}
+var appId = '526791527487217'; var scopes = 'public_profile,publish_actions,email,user_location'; var redirectURL = "http://" + window.location.host + "/web/" + party; var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL + "&display=page"; window.location = url;}}
 
 </script>
 
