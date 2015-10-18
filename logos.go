@@ -10,11 +10,12 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"appengine"
 )
 
-var THELOGOIMAGES = loadLogos(nil, "./logos", "./ribbons")
+var THELOGOIMAGES = loadLogos(nil, "./logos", "./ribbons", "./nld")
 
 func check(e error, context appengine.Context) {
 	if e != nil {
@@ -35,8 +36,13 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 		randi := rand.Intn(len(logoImages))
 		logoImage := logoImages[randi]
 
+		offset := image.Pt(5, 5)
+		if strings.HasPrefix(logo, "NLD-") {
+			offset = image.Pt(0, 0)
+		}
+
 		start := profileImage.Bounds().Size()
-		start = start.Sub(image.Pt(5, 5))
+		start = start.Sub(offset)
 		start = start.Sub(logoImage.Bounds().Size())
 
 		bounds := image.Rectangle{start, start.Add(logoImage.Bounds().Size())}
