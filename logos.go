@@ -15,7 +15,7 @@ import (
 	"appengine"
 )
 
-var THELOGOIMAGES = loadLogos(nil, "./logos", "./ribbons", "./nld")
+var THELOGOIMAGES = loadLogos(nil, "./logos", "./ribbons", "./sp")
 
 func check(e error, context appengine.Context) {
 	if e != nil {
@@ -37,7 +37,7 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 		logoImage := logoImages[randi]
 
 		offset := image.Pt(5, 5)
-		if strings.HasPrefix(logo, "NLD-") {
+		if strings.HasPrefix(logo, "SP-") {
 			offset = image.Pt(0, 0)
 		}
 
