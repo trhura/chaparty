@@ -3,6 +3,10 @@ version: 1
 runtime: go
 api_version: go1
 
+env_variables:
+    APPSECRET: 'my value'
+
 handlers:
 - url: /.*
   script: _go_app
+
