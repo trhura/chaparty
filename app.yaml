@@ -4,7 +4,7 @@ runtime: go
 api_version: go1
 
 env_variables:
-    APPSECRET: 'my value'
+    APPSECRET: 'e314e5fc761425d59ea9e2666c63e108'
 
 handlers:
 - url: /.*
