@@ -22,7 +22,7 @@ import (
 	"appengine/urlfetch"
 )
 
-var APPSECRET = os.Getenv("APPSECRET")
+//var APPSECRET = os.Getenv("APPSECRET")
 var clientID = "526791527487217"
 var FbApp = fb.New(clientID, APPSECRET)
 
