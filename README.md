@@ -5,7 +5,7 @@ Web application for "Which party are you going to support in 2015?"
 ## Development
 
 Chaparty is written in [Golang](https://golang.org) and runs on [Google App Engine](https://cloud.google.com/appengine/docs).
-Please note that App Enging Golang runtime comes with its own Golang runtime and does not relate to host Golang installation.
+Please note that App Engine Golang runtime comes with its own complete Golang toolchain and does not relate to host Golang installation.
 
 - Install [App Engine for Go runtime](https://cloud.google.com/appengine/docs/go/)
 - Define `APPSECRET` in `app.yaml`
