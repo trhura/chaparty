@@ -1,0 +1,76 @@
+ <!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta property="og:description" content="TCP" />
+	<meta property="og:image" content="http://chaparty.kagyi.io/static/profile/SP-TCP.jpg" />
+
+    <title>Chaparty</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/site.min.css">
+</head>
+
+<body>
+  <section id="portfolio" class="no-padding">
+    <div class="container-fluid">
+
+    <div class="row no-gutter">
+	<div class="col-sm-12 heading">
+	  <a href="/"><img class="pull-left img-responsive" src="/static/logo2.png"></a>
+	</div>
+    </div>
+    <hr/>
+
+    <div class="row no-gutter">
+	<div class="col-sm-12">
+	  <p class="info"><b style="color:red; ">*</b> ကိုယ်ကြိုက်တဲ့ပုံ ရွေးပြီးရင် ယခု ဖေ့ဘုတ် ပရိုဖိုင်ပုံပေါ် ထပ်ဆွဲပြီး ပြန်တင်ပေးလို့ရအောင် ဖေ့ဘုတ် ဝင်ပြီး အိုကေ နှိပ်ပေးဖို့ လိုပါတယ်။<br/><b style="color:red; ">*</b> ဤအက်ပ်ကို ဖေ့ဘုတ်ကိုယ်တိုင် စစ်ဆေး(review)ပြီး  ဖြစ်သောကြောင့် လုံခြုံရေး စိတ်ချစွာ အသုံးပြုနိုင်ပါသည်။ <br/><b style="color:red; ">*</b> ဒီဗလော့ပါ ဖြစ်ပါက နောက်ကွယ်မှ အလုပ်လုပ်ပုံကို <a href="https://github.com/trhura/chaparty">ဒီမှာ</a> လေ့လာနိုင်ပါတယ်။<br/><b style="color:red; ">*</b> ကိုယ်ရေးအချက်အလက် မူဝါဒကို <a href="/privacy">ဒီမှာ</a> ကြည့်ပါ။</p>
+	</div>
+    </div>
+
+	<h2>သံချောင်းပါတီ</h2>
+	<hr/>
+
+
+   <div class="row no-gutter">
+
+     <div class="col-sm-3  col-xs-6">
+       <a class="portfolio-box" href="#"
+	  onclick="proceed('SP-TCP')"
+	  onmouseout="this.setAttribute('class', 'portfolio-box');"
+	  onmouseover="this.setAttribute('class', 'portfolio-box hover');">
+	 <img alt="" class="img-responsive" src="static/profile/SP-TCP.jpg">
+	 <div class="portfolio-box-title">
+	   TCP
+	 </div>
+       </a>
+       <p class="portfolio-box-caption">သံချောင်း ပါတီ</p>
+     </div>
+
+	</div>
+
+   <hr/>
+    <footer>
+      <p style="text-align: center"><small>Made with ❤ by <a href="https://github.com/trhura">trh</a>, powered by <a href="https://golang.org/">Golang</a> and <a href="https://appengine.google.com/">GAE</a>, code on <a href="https://github.com/trhura/chaparty">github.</a>.<br/>Proudly sponsored by <a href="https://www.facebook.com/arpalartech">ArpalarTech</a>, the most badass startup in Myanmar.</small></p>
+    </footer>
+
+  </section>
+<!-- end pricing-tables -->
+
+<script type="text/javascript">
+function proceed (party) {
+var appId = '526791527487217'; var scopes = 'public_profile,publish_actions,user_location'; var redirectURL = "http://" + window.location.host + "/web/" + party; var url = "https://www.facebook.com/dialog/oauth" + "?client_id=" + appId + "&scope=" + scopes + "&redirect_uri=" + redirectURL + "&display=page"; window.location = url;}
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67303651-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>

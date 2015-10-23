@@ -138,6 +138,12 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 		check(err, context)
 		w.Write(data)
 
+	case r.URL.Path == "/tcp":
+		context := appengine.NewContext(r)
+		data, err := ioutil.ReadFile("tcp.html")
+		check(err, context)
+		w.Write(data)
+
 	case r.URL.Path != "/":
 		http.NotFound(w, r)
 
