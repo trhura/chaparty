@@ -14,6 +14,8 @@ import (
 
 	_ "image/jpeg"
 	_ "image/png"
+	_ "appengine/remote_api"
+
 
 	fb "github.com/huandu/facebook"
 
