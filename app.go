@@ -14,8 +14,8 @@ import (
 
 	_ "image/jpeg"
 	_ "image/png"
-	_ "appengine/remote_api"
 
+	_ "appengine/remote_api"
 
 	fb "github.com/huandu/facebook"
 
@@ -24,7 +24,7 @@ import (
 	"appengine/urlfetch"
 )
 
-//var APPSECRET = os.Getenv("APPSECRET")
+var APPSECRET = os.Getenv("APPSECRET")
 var clientID = "526791527487217"
 var FbApp = fb.New(clientID, APPSECRET)
 

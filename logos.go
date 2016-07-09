@@ -61,7 +61,6 @@ func addLogo(profilePtr *image.Image, logo string, context appengine.Context) []
 
 func loadLogos(context appengine.Context, globpaths ...string) map[string][]image.Image {
 	logoImagesByName := make(map[string][]image.Image)
-
 	for _, path := range globpaths {
 		logoFolders, err := filepath.Glob(path + "/*")
 		check(err, context)

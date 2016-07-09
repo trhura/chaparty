@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 )
 
-var THELOGOIMAGES = loadLogos("./logos", "./ribbons")
+var THELOGOIMAGES = loadLogos("./sp")
 var idx = 0
 
 func main() {
@@ -44,10 +44,11 @@ func addLogo(profilePtr *image.Image, logo string) []byte {
 			idx = 0
 		}
 
+		fmt.Printf("idx = %s\n", logo)
 		logoImage := logoImages[idx]
 		idx++
 		start := profileImage.Bounds().Size()
-		start = start.Sub(image.Pt(5, 5))
+		start = start.Sub(image.Pt(0, 0))
 		start = start.Sub(logoImage.Bounds().Size())
 
 		bounds := image.Rectangle{start, start.Add(logoImage.Bounds().Size())}
@@ -72,14 +73,14 @@ func loadLogos(globpaths ...string) map[string][]image.Image {
 		check(err)
 
 		for _, logoFolder := range logoFolders {
-			logoFiles, err := filepath.Glob(logoFolder + "/*")
+			logoFiles, err := filepath.Glob(logoFolder + "/*.png")
 			check(err)
 
 			filename := filepath.Base(logoFolder)
 			logoImages := make([]image.Image, 0)
 
 			for _, logoFile := range logoFiles {
-				//fmt.Fprintf(os.Stderr, "%s\n", logoFile)
+				fmt.Fprintf(os.Stderr, "%s\n", logoFile)
 				logoData, err := os.Open(logoFile)
 				defer logoData.Close()
 				check(err)
